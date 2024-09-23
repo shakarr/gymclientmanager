@@ -1,0 +1,55 @@
+@import "~/src/scss/index";
+
+.new-diet-container {
+  width: 100%;
+
+  &--content {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+
+    .first-section,
+    .second-section {
+      display: flex;
+      flex-direction: row;
+      gap: 5px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    &--input-wrapper {
+      margin-bottom: 1.375rem;
+
+      label {
+        margin-bottom: 0.75rem;
+        display: block;
+        font-weight: 500;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+      }
+
+      .input-container {
+        position: relative;
+        margin-bottom: 5px;
+
+        span {
+          position: absolute;
+          left: 1.125rem;
+          top: 0.75rem;
+        }
+
+        input {
+          width: 100%;
+          border-radius: 0.25rem;
+          border-width: 1px;
+          padding: 0.75rem 1.125rem 0.75rem 2.875rem;
+          margin-bottom: 5px;
+        }
+      }
+    }
+
+    &--buttons {
+      width: 100%;
+    }
+  }
+}

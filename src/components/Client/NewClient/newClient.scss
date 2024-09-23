@@ -1,0 +1,47 @@
+@import "~/src/scss/index";
+
+.new-client-container {
+  width: 100%;
+
+  &--content {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+
+    &--input-wrapper {
+      margin-bottom: 1.375rem;
+
+      label {
+        margin-bottom: 0.75rem;
+        display: block;
+        font-weight: 500;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+      }
+
+      .input-container {
+        position: relative;
+
+        span {
+          position: absolute;
+          left: 1.125rem;
+          top: 0.75rem;
+        }
+
+        input {
+          width: 100%;
+          border-radius: 0.25rem;
+          border-width: 1px;
+          padding-top: 0.75rem;
+          padding-bottom: 0.75rem;
+          padding-left: 2.875rem;
+          padding-right: 1.125rem;
+        }
+      }
+    }
+
+    &--buttons {
+      width: 100%;
+    }
+  }
+}

@@ -1,0 +1,21 @@
+@import "~/src/scss/index";
+
+.container-footer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+
+  p {
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+
+    a {
+      color: white;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  }
+}

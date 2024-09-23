@@ -1,0 +1,10 @@
+@import "~/src/scss/index";
+
+.dietas-page {
+  margin: 20px 40px;
+
+  a,
+  p {
+    color: $font-light;
+  }
+}

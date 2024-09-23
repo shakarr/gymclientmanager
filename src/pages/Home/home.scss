@@ -1,0 +1,9 @@
+@import "~/src/scss/index";
+
+.container-home {
+  h1,
+  p,
+  .description {
+    color: $font-light;
+  }
+}

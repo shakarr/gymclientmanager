@@ -1,0 +1,40 @@
+@import "~/src/scss/index";
+
+.basic-modal {
+  background-color: $background-light !important;
+  border-radius: 15px !important;
+
+  .header {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    background-color: transparent !important;
+    padding: 10px 5px !important;
+    border-bottom: 0 !important;
+    color: $font-dark !important;
+
+    > span {
+      font-size: 30px;
+      padding: 10px;
+    }
+
+    i {
+      color: $font-dark !important;
+    }
+  }
+
+  .content {
+    background-color: transparent !important;
+    text-align: center;
+    font-size: 18px !important;
+    color: $font-dark !important;
+  }
+
+  .MuiButtonBase-root.Mui-disabled{
+    opacity: 0.3;
+    background-color: #1976d2 !important;
+    color: $font-light !important;
+  }
+}
+
+
