@@ -14,9 +14,6 @@ import {
 import { BackendClient } from "../../../utils/backendClient";
 
 import {
-  bgPdf,
-  foodFour,
-  foodThree,
   igImage,
   pdfImg,
   phoneIco,
@@ -112,12 +109,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   backgroundImage: {
-    position: "absolute", // Posiciona la imagen en el fondo
+    position: "absolute",
     top: 0,
     left: 0,
     width: "100%",
     height: "100%",
-    zIndex: -1, // Envía la imagen al fondo, detrás de los otros elementos
+    zIndex: -1,
   },
 });
 
@@ -136,54 +133,20 @@ const MyDocument = ({ data, name }) => (
 
       <Text style={styles.header}>Dieta Personalizada: {name}</Text>
 
-      <View style={styles.section} wrap={false}>
-        <Text style={styles.subHeader}>Desayuno</Text>
-        {data.mañana.map((item, index) => (
-          <Text style={styles.listItem} key={index}>
-            • {item}
-          </Text>
-        ))}
-      </View>
-
-      <View style={styles.section} wrap={false}>
-        <Text style={styles.subHeader}>Media Mañana</Text>
-        {data.mediaMañana.map((item, index) => (
-          <Text style={styles.listItem} key={index}>
-            • {item}
-          </Text>
-        ))}
-      </View>
-
-      <View style={styles.section} wrap={false}>
-        <Text style={styles.subHeader}>Almuerzo</Text>
-        {data.almuerzo.map((item, index) => (
-          <Text style={styles.listItem} key={index}>
-            • {item}
-          </Text>
-        ))}
-      </View>
-
-      <View style={styles.section} wrap={false}>
-        <Text style={styles.subHeader}>Media Tarde</Text>
-        {data.mediaTarde.map((item, index) => (
-          <Text style={styles.listItem} key={index}>
-            • {item}
-          </Text>
-        ))}
-      </View>
-
-      <View style={styles.section} wrap={false}>
-        <Text style={styles.subHeader}>Cena</Text>
-        {data.cena.map((item, index) => (
-          <Text style={styles.listItem} key={index}>
-            • {item}
-          </Text>
-        ))}
-      </View>
+      {data.meals.map((meal, index) => (
+        <View style={styles.section} wrap={false} key={index}>
+          <Text style={styles.subHeader}>{meal.name}</Text>
+          {meal.items.map((item, itemIndex) => (
+            <Text style={styles.listItem} key={itemIndex}>
+              • {item}
+            </Text>
+          ))}
+        </View>
+      ))}
 
       <View style={styles.calorieSection} wrap={false}>
         <Text style={styles.smallText}>
-          total de calorias - {data.calories} cal
+          Total de calorías - {data.calories} cal
         </Text>
       </View>
     </Page>
@@ -197,36 +160,25 @@ export const DietPdf = (props) => {
   const [diet, setDiet] = useState({
     name: "",
     calories: "",
-    mañana: [""],
-    mediaMañana: [""],
-    almuerzo: [""],
-    mediaTarde: [""],
-    cena: [""],
+    meals: [], // Ajuste para la estructura de meals
   });
 
   useEffect(() => {
     const getDietById = async () => {
       try {
         const { data } = await client.get(`/api/diets/${id}`);
-        console.log(data);
-        const mappedResponse = {
-          mañana: data.mañana,
-          mediaMañana: data.mediaMañana,
-          almuerzo: data.almuerzo,
-          mediaTarde: data.mediaTarde,
-          cena: data.cena,
+        setDiet({
+          meals: data.meals, // Ajuste para traer la estructura de meals desde el backend
           name: data.name,
           calories: data.calories,
-        };
-        setDiet(mappedResponse);
+        });
       } catch (error) {
         const { msg } = error.response.data;
         toast.error(msg);
       }
     };
     getDietById();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [id, client]);
 
   return (
     <div>

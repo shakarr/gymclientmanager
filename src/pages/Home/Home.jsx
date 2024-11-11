@@ -37,21 +37,6 @@ export function Home() {
               </List.Item>
               <List.Item>
                 <a
-                  href="https://github.com/shakarr/gymclientmanager"
-                  target="_blank"
-                  title="Visit Github"
-                  rel="noreferrer"
-                >
-                  <div className="home-button">
-                    <p>
-                      <Icon name="github" color="blue" size="big" />
-                    </p>
-                    <p>Github</p>
-                  </div>
-                </a>
-              </List.Item>
-              <List.Item>
-                <a
                   href="https://github.com/shakarr/gymclientmanager/issues"
                   target="_blank"
                   title="Report Bugs"

@@ -3,10 +3,16 @@ import { Modal, Icon } from "semantic-ui-react";
 import "./modal.scss";
 
 export const BasicModal = (props) => {
-  const { show, onClose, title, size, children } = props;
+  const { show, onClose, title, size, width, children } = props;
 
   return (
-    <Modal open={show} size={size} onClose={onClose} className="basic-modal">
+    <Modal
+      style={{ width: width }}
+      open={show}
+      size={size}
+      onClose={onClose}
+      className="basic-modal"
+    >
       <Modal.Header>
         <div />
         <span>{title}</span>
@@ -16,4 +22,3 @@ export const BasicModal = (props) => {
     </Modal>
   );
 };
-

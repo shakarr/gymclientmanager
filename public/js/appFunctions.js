@@ -46,19 +46,19 @@ ipcRenderer.send("app_version");
 
 ipcRenderer.on("app_version", (event, arg) => {
   ipcRenderer.removeAllListeners("app_version");
-  version.innerText = "Version " + arg.version;
+  version.innerText = arg.version;
 });
 
 ipcRenderer.on("update_available", () => {
   ipcRenderer.removeAllListeners("update_available");
-  message.innerText = "A new update is available. Downloading now...";
+  message.innerText = "Hay una nueva actualización disponible. Descargando...";
   notification.classList.remove("hidden");
 });
 
 ipcRenderer.on("update_downloaded", () => {
   ipcRenderer.removeAllListeners("update_downloaded");
   message.innerText =
-    "Update Downloaded. It will be installed on restart. Restart now?";
+    "Actualización descargada. Se instalará después de reiniciar. ¿Desea reiniciar ahora?";
   restartButton.classList.remove("hidden");
   notification.classList.remove("hidden");
 });

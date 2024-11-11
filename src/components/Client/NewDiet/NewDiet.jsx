@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { Button } from "@mui/material";
+import { Button, Divider, IconButton } from "@mui/material";
 
 import FastfoodOutlinedIcon from "@mui/icons-material/FastfoodOutlined";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import FoodBankOutlinedIcon from "@mui/icons-material/FoodBankOutlined";
 
 import { BackendClient } from "../../../utils/backendClient";
 
@@ -11,66 +13,123 @@ import "./newDiet.scss";
 
 export const NewDiet = (props) => {
   const client = new BackendClient();
-
   const { handleCloseModal, setClients, clientId } = props;
 
   const [dataDiet, setDataDiet] = useState({
     name: "",
     calories: "",
-    mañana: [],
-    mediaMañana: [],
-    almuerzo: [],
-    mediaTarde: [],
-    cena: [],
     clientId,
+    meals: [], // Array para manejar las comidas dinámicamente
   });
 
-  const validarCampos = () => {
-    const { mañana, mediaMañana, almuerzo, mediaTarde, cena, name, calories } =
-      dataDiet;
+  const [mealCount, setMealCount] = useState(0); // Para almacenar el número de comidas
+  const [mealNames, setMealNames] = useState([]); // Para almacenar los nombres de las comidas
 
+  const validarCampos = () => {
+    const { name, calories, meals } = dataDiet;
     if (
       name === "" ||
       calories === "" ||
-      !mañana.length ||
-      !mediaMañana.length ||
-      !almuerzo.length ||
-      !mediaTarde.length ||
-      !cena.length
+      !meals.length ||
+      meals.some((meal) => !meal.items.length)
     ) {
       return false;
     }
     return true;
   };
 
-  const handleChange = (e, mealType, index) => {
-    const { value } = e.target;
-
-    setDataDiet((prevData) => {
-      const updatedMeals = [...prevData[mealType]];
-      updatedMeals[index] = value;
-
-      return {
-        ...prevData,
-        [mealType]: updatedMeals,
-      };
-    });
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
     setDataDiet({
       ...dataDiet,
       [name]: value,
     });
   };
 
-  const addMeal = (mealType) => {
+  const handleMealCountChange = (e) => {
+    const count = parseInt(e.target.value);
+    setMealCount(count);
+    setMealNames(Array(count).fill("")); // Inicializar los nombres de las comidas vacíos
     setDataDiet((prevData) => ({
       ...prevData,
-      [mealType]: [...prevData[mealType], ""],
+      meals: Array(count).fill({ name: "", items: [] }),
     }));
+  };
+
+  const handleMealNameChange = (e, index) => {
+    const newMealNames = [...mealNames];
+    newMealNames[index] = e.target.value;
+    setMealNames(newMealNames);
+
+    // Actualizar el nombre de cada comida en dataDiet
+    setDataDiet((prevData) => {
+      const updatedMeals = [...prevData.meals];
+      updatedMeals[index] = { ...updatedMeals[index], name: e.target.value };
+      return {
+        ...prevData,
+        meals: updatedMeals,
+      };
+    });
+  };
+
+  const handleMealItemChange = (e, mealIndex, itemIndex) => {
+    const { value } = e.target;
+    setDataDiet((prevData) => {
+      const updatedMeals = [...prevData.meals];
+      const updatedItems = [...updatedMeals[mealIndex].items];
+      updatedItems[itemIndex] = value;
+      updatedMeals[mealIndex] = {
+        ...updatedMeals[mealIndex],
+        items: updatedItems,
+      };
+      return {
+        ...prevData,
+        meals: updatedMeals,
+      };
+    });
+  };
+
+  const addMealItem = (mealIndex) => {
+    setDataDiet((prevData) => {
+      const updatedMeals = [...prevData.meals];
+      const updatedItems = [...updatedMeals[mealIndex].items, ""];
+      updatedMeals[mealIndex] = {
+        ...updatedMeals[mealIndex],
+        items: updatedItems,
+      };
+      return {
+        ...prevData,
+        meals: updatedMeals,
+      };
+    });
+  };
+
+  const removeMealItem = (mealIndex, itemIndex) => {
+    setDataDiet((prevData) => {
+      const updatedMeals = [...prevData.meals];
+      const updatedItems = updatedMeals[mealIndex].items.filter(
+        (_, idx) => idx !== itemIndex
+      );
+      updatedMeals[mealIndex] = {
+        ...updatedMeals[mealIndex],
+        items: updatedItems,
+      };
+      return {
+        ...prevData,
+        meals: updatedMeals,
+      };
+    });
+  };
+
+  // Función para devolver un objeto `dataDiet` sin elementos vacíos en `items`
+  const cleanDataDiet = (data) => {
+    return {
+      ...data,
+      meals: data.meals.map((meal) => ({
+        ...meal,
+        items: meal.items.filter((item) => item.trim() !== ""), // Filtrar elementos vacíos
+      })),
+    };
   };
 
   const getClients = async () => {
@@ -95,9 +154,11 @@ export const NewDiet = (props) => {
       toast.warning("Todos los campos son obligatorios");
       return;
     }
+    // Limpiar datos antes de enviarlos
+    const cleanedDataDiet = cleanDataDiet(dataDiet);
 
     try {
-      const { data } = await client.post(`/api/diets`, dataDiet);
+      const { data } = await client.post(`/api/diets`, cleanedDataDiet);
       toast.success(data.msg);
       handleCloseModal();
       getClients();
@@ -110,7 +171,7 @@ export const NewDiet = (props) => {
   return (
     <div className="new-diet-container">
       <div className="new-diet-container--content">
-        <div className="new-client-container--content--input-wrapper">
+        <div className="new-diet-container--content--input-wrapper">
           <div className="input-container">
             <span>
               <FastfoodOutlinedIcon />
@@ -125,7 +186,7 @@ export const NewDiet = (props) => {
           </div>
         </div>
 
-        <div className="new-client-container--content--input-wrapper">
+        <div className="new-diet-container--content--input-wrapper">
           <div className="input-container">
             <span>
               <MenuBookOutlinedIcon />
@@ -140,103 +201,80 @@ export const NewDiet = (props) => {
           </div>
         </div>
 
-        <div className="first-section">
-          <div className="new-client-container--content--input-wrapper">
-            <h3>Desayuno</h3>
-            {dataDiet.mañana.map((item, index) => (
-              <div key={index} className="input-container">
-                <span>
-                  <FastfoodOutlinedIcon />
-                </span>
-                <input
-                  type="text"
-                  placeholder={`Desayuno - ${index + 1}`}
-                  value={item}
-                  onChange={(e) => handleChange(e, "mañana", index)}
-                />
-              </div>
-            ))}
-            <Button onClick={() => addMeal("mañana")}>Añadir comida</Button>
-          </div>
-
-          <div className="new-client-container--content--input-wrapper">
-            <h3>Media Mañana</h3>
-            {dataDiet.mediaMañana.map((item, index) => (
-              <div key={index} className="input-container">
-                <span>
-                  <FastfoodOutlinedIcon />
-                </span>
-                <input
-                  type="text"
-                  placeholder={`Media Mañana - ${index + 1}`}
-                  value={item}
-                  onChange={(e) => handleChange(e, "mediaMañana", index)}
-                />
-              </div>
-            ))}
-            <Button onClick={() => addMeal("mediaMañana")}>
-              Añadir Comida
-            </Button>
+        <div className="new-diet-container--content--input-wrapper">
+          <div className="input-container">
+            <span>
+              <MenuBookOutlinedIcon />
+            </span>
+            <input
+              type="number"
+              placeholder="Número de comidas"
+              value={mealCount}
+              onChange={handleMealCountChange}
+            />
           </div>
         </div>
 
-        <div className="second-section">
-          <div className="new-client-container--content--input-wrapper">
-            <h3>Almuerzo</h3>
-            {dataDiet.almuerzo.map((item, index) => (
-              <div key={index} className="input-container">
-                <span>
-                  <FastfoodOutlinedIcon />
-                </span>
-                <input
-                  type="text"
-                  placeholder={`Almuerzo - ${index + 1}`}
-                  value={item}
-                  onChange={(e) => handleChange(e, "almuerzo", index)}
-                />
-              </div>
-            ))}
-            <Button onClick={() => addMeal("almuerzo")}>Añadir Comida</Button>
+        {mealCount !== 0 && (
+          <div className="divider-container">
+            <Divider />
           </div>
+        )}
 
-          <div className="new-client-container--content--input-wrapper">
-            <h3>Media Tarde</h3>
-            {dataDiet.mediaTarde.map((item, index) => (
-              <div key={index} className="input-container">
-                <span>
-                  <FastfoodOutlinedIcon />
-                </span>
-                <input
-                  type="text"
-                  placeholder={`Media Tarde - ${index + 1}`}
-                  value={item}
-                  onChange={(e) => handleChange(e, "mediaTarde", index)}
-                />
+        <div className="meals-container">
+          {mealNames.map((mealName, index) => (
+            <div className="meal-section">
+              <div
+                key={index}
+                className="new-diet-container--content--input-wrapper"
+              >
+                <div className="input-container">
+                  <span>
+                    <FoodBankOutlinedIcon />
+                  </span>
+                  <input
+                    type="text"
+                    placeholder={`Nombre de la comida`}
+                    value={mealName}
+                    onChange={(e) => handleMealNameChange(e, index)}
+                  />
+                </div>
+
+                {dataDiet.meals[index].items.map((item, itemIndex) => (
+                  <div
+                    key={itemIndex}
+                    className="new-diet-container--content--input-wrapper"
+                  >
+                    <div className="input-container">
+                      <span>
+                        <FastfoodOutlinedIcon />
+                      </span>
+                      <input
+                        type="text"
+                        placeholder={`Comida ${itemIndex + 1}`}
+                        value={item}
+                        onChange={(e) =>
+                          handleMealItemChange(e, index, itemIndex)
+                        }
+                      />
+                      {/* <IconButton
+                        onClick={() => removeMealItem(index, itemIndex)}
+                        aria-label="delete"
+                      >
+                        <DeleteOutlineOutlinedIcon />
+                      </IconButton> */}
+                    </div>
+                  </div>
+                ))}
+                <Button onClick={() => addMealItem(index)}>
+                  Añadir comida
+                </Button>
               </div>
-            ))}
-            <Button onClick={() => addMeal("mediaTarde")}>Añadir Comida</Button>
-          </div>
-        </div>
-
-        <div className="new-client-container--content--input-wrapper">
-          <h3>Cena</h3>
-          {dataDiet.cena.map((item, index) => (
-            <div key={index} className="input-container">
-              <span>
-                <FastfoodOutlinedIcon />
-              </span>
-              <input
-                type="text"
-                placeholder={`Cena - ${index + 1}`}
-                value={item}
-                onChange={(e) => handleChange(e, "cena", index)}
-              />
             </div>
           ))}
-          <Button onClick={() => addMeal("cena")}>Añadir Comida</Button>
         </div>
 
-        <div className="new-client-container--content--buttons">
+        <div className="new-diet-container--content--buttons">
           <Button variant="contained" size="medium" onClick={createDiet}>
             Guardar
           </Button>

@@ -21,6 +21,7 @@ export const ClientDietsView = () => {
   const [titleModal, setTitleModal] = useState("");
   const [contentModal, setContentModal] = useState(null);
   const [clientDiets, setClientDiets] = useState([]);
+  const [widthModal, setWidthModal] = useState("auto");
 
   const columns = [
     {
@@ -60,11 +61,11 @@ export const ClientDietsView = () => {
     setShowModal(false);
     setTitleModal("");
     setContentModal(null);
+    setWidthModal("auto")
   };
 
   const generatePdfDiet = (id) => {
-    console.log(name);
-    
+    setWidthModal("30%")   
     setTitleModal("Descargar PDF");
     setShowModal(true);
     setContentModal(
@@ -207,6 +208,7 @@ export const ClientDietsView = () => {
 
       <BasicModal
         show={showModal}
+        width={widthModal}
         onClose={closeModal}
         title={titleModal}
         children={contentModal}

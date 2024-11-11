@@ -52,6 +52,7 @@ export const Dietas = () => {
   const [showModal, setShowModal] = useState(false);
   const [titleModal, setTitleModal] = useState("");
   const [contentModal, setContentModal] = useState(null);
+  const [widthModal, setWidthModal] = useState("auto");
 
   const columns = [
     {
@@ -150,9 +151,11 @@ export const Dietas = () => {
     setShowModal(false);
     setTitleModal("");
     setContentModal(null);
+    setWidthModal("auto")
   };
 
   const handleCreateClient = () => {
+    setWidthModal("auto")
     setShowModal(true);
     setTitleModal("Crear Cliente");
     setContentModal(
@@ -192,6 +195,7 @@ export const Dietas = () => {
   };
 
   const handleCreateDiet = (id) => {
+    setWidthModal("auto")
     setShowModal(true);
     setTitleModal("Crear Dieta");
     setContentModal(
@@ -303,6 +307,7 @@ export const Dietas = () => {
 
       <BasicModal
         show={showModal}
+        width={widthModal}
         onClose={closeModal}
         title={titleModal}
         children={contentModal}
