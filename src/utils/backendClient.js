@@ -2,7 +2,7 @@ import axios from "axios";
 import queryString from "query-string";
 
 class BackendClient {
-  backend_url = process.env.BACKEND_URL || "http://localhost:8000";
+  backend_url = process.env.BACKEND_URL || "https://gymclientapi.shakarzr.com";
   options = {};
 
   constructor() {
